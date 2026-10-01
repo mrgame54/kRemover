@@ -20,6 +20,17 @@ TEMPLATE = {
     ]
 }
 """
+# format helper funtion
+def format_size(size_in_bytes: int) -> str:
+    if size_in_bytes < 1024:
+        return f"{size_in_bytes} B"
+    elif size_in_bytes < 1024 * 1024:
+        return f"{round(size_in_bytes / 1024, 2)} KB"
+    elif size_in_bytes < 1024 * 1024 * 1024:
+        return f"{round(size_in_bytes / (1024 * 1024), 2)} MB"
+    else:
+        return f"{round(size_in_bytes / (1024 * 1024 * 1024), 2)} GB"
+
 # to find the XDG folders for app, inclduding weird ones like app, apprc, app.conf
 def map_xdg_paths(app_name: str) -> list[Path]:
     #/home/localusername
@@ -59,55 +70,61 @@ def inspect_folder_tree(target_path: Path) -> dict | None:
     path_data = {
         "target_path": str(target_path),
         "is_directory": target_path.is_dir(),
-        "size_mb": 0.0,
+        "size_str": "0 B",
+        "raw_bytes": 0, 
         "files": []
     }
     
     total_bytes = 0
-    
-    # .rglob('*') rec func for findng all files
+
+    # .rglob to rec find file size
     if target_path.is_file():
-        # files like ~/.config/elisarc
-        file_size = target_path.stat().st_size
-        total_bytes += file_size
-        path_data["files"].append({
-            "path": str(target_path),
-            "size_kb": round(file_size / 1024, 2)
-        })
+        try:
+            file_size = target_path.stat().st_size
+            total_bytes += file_size
+            path_data["files"].append({
+                "path": str(target_path),
+                "size_str": format_size(file_size)
+            })
+        except PermissionError:
+            pass 
     else:
-        # folders like ~/.cache/elisa
         for item in target_path.rglob('*'):
             if item.is_file(): 
-                file_size = item.stat().st_size
-                total_bytes += file_size
-                path_data["files"].append({
-                    "path": str(item),
-                    "size_kb": round(file_size / 1024, 2)
-                })
+                try:
+                    file_size = item.stat().st_size
+                    total_bytes += file_size
+                    path_data["files"].append({
+                        "path": str(item),
+                        "size_str": format_size(file_size)
+                    })
+                except PermissionError:
+                    pass
             
-    # return in mb
-    path_data["dir_size_mb"] = round(total_bytes / (1024 * 1024), 2)
-    
+    path_data["size_str"] = format_size(total_bytes)
+    path_data["raw_bytes"] = total_bytes
     return path_data
 
 # main function to return data for gui
 def scan_app_leftovers(app_name: str) -> dict:
     final_data = {
         "app_name": app_name,
-        "total_size_mb": 0.0,
-        "paths": []
+        "total_size_str": "0 B", 
+        "paths": [] 
     }
-    # get xdg paths
+    
+    total_app_bytes = 0
     paths_to_check = map_xdg_paths(app_name)
+    
     for path in paths_to_check:
         path_info = inspect_folder_tree(path)
         
         if path_info:
             final_data["paths"].append(path_info)
-            final_data["total_size_mb"] += path_info["dir_size_mb"]
+            total_app_bytes += path_info["raw_bytes"]
             
-    final_data["total_size_mb"] = round(final_data["total_size_mb"], 2)
-    
+    # return with helper fnc
+    final_data["total_size_str"] = format_size(total_app_bytes)
     return final_data
 
 # move to trash, returns summary of succes and fail to gui
@@ -160,6 +177,29 @@ def remove_rpm_package(app_name: str) -> dict:
     except Exception as e:
         return {"success": False, "message": "An unexpected error occurred.", "details": str(e)}
 
+# fetch installed packages 
+def get_installed_packages() -> list:
+    try:
+        # rpm -qa lists all packages. --queryformat '%{NAME}\n' outputs just the names
+        result = subprocess.run(["rpm", "-qa", "--queryformat", "%{NAME}\n"], 
+                                capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            packages = result.stdout.splitlines()
+
+            # filter 
+            clean_list = [
+                p for p in packages 
+                if not p.startswith("lib") 
+                and not p.endswith("-libs") 
+                and not p.endswith("-devel")
+                and not p.endswith("-common")
+            ]
+            
+            return sorted(clean_list)
+        return []
+    except Exception:
+        return []
 
 # ====================================================
 # TESTING BLOCK | Will be removed but works for now!!!

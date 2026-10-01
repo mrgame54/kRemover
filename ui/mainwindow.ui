@@ -6,49 +6,145 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>919</width>
+    <height>573</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../assets/resources.qrc">
+    <normaloff>:/images/dark.png</normaloff>:/images/dark.png</iconset>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <layout class="QVBoxLayout" name="verticalLayout">
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLineEdit" name="search_input"/>
-      </item>
-      <item>
-       <widget class="QPushButton" name="scan_btn">
+       <widget class="QLabel" name="logo">
+        <property name="maximumSize">
+         <size>
+          <width>48</width>
+          <height>48</height>
+         </size>
+        </property>
         <property name="text">
-         <string>Scan for Leftovers</string>
+         <string/>
+        </property>
+        <property name="pixmap">
+         <pixmap resource="../assets/resources.qrc">:/images/dark.png</pixmap>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QTreeWidget" name="results_tree">
-        <column>
-         <property name="text">
-          <string notr="true">1</string>
-         </property>
-        </column>
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>128</width>
+          <height>48</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>Nunito</family>
+          <pointsize>18</pointsize>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>kRemover</string>
+        </property>
+        <property name="scaledContents">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
+     </layout>
+    </item>
+    <item row="0" column="1">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>725</width>
+        <height>48</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="0" colspan="2">
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
-       <widget class="QPushButton" name="trash_btn">
+       <widget class="QListWidget" name="app_list"/>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_2">
+        <property name="maximumSize">
+         <size>
+          <width>128</width>
+          <height>128</height>
+         </size>
+        </property>
         <property name="text">
-         <string>Move Selected to Trash</string>
+         <string/>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="uninstall_btn">
-        <property name="text">
-         <string>Uninstall via DNF</string>
-        </property>
-       </widget>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QLineEdit" name="search_input">
+          <property name="statusTip">
+           <string/>
+          </property>
+          <property name="placeholderText">
+           <string>Type Package Name or Select it</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="scan_btn">
+          <property name="text">
+           <string>Scan for Leftovers</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTreeWidget" name="results_tree">
+          <column>
+           <property name="text">
+            <string notr="true">1</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="trash_btn">
+          <property name="text">
+           <string>Move Selected to Trash</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="uninstall_btn">
+          <property name="text">
+           <string>Uninstall via DNF</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </item>
@@ -59,7 +155,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>919</width>
      <height>30</height>
     </rect>
    </property>
@@ -68,10 +164,24 @@
      <string>kRemover</string>
     </property>
    </widget>
+   <widget class="QMenu" name="menuAbout">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menukRemover"/>
+   <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../assets/resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
