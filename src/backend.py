@@ -1,5 +1,7 @@
 import json
 from pathlib import Path
+import send2trash
+import subprocess
 
 # check how backend Output should look like
 """
@@ -107,6 +109,57 @@ def scan_app_leftovers(app_name: str) -> dict:
     final_data["total_size_mb"] = round(final_data["total_size_mb"], 2)
     
     return final_data
+
+# move to trash, returns summary of succes and fail to gui
+def move_to_trash(paths_to_delete: list) -> dict:
+    results = {
+        "success": [],
+        "failed": []
+    }
+    
+    for path in paths_to_delete:
+        p = Path(path) if isinstance(path, str) else path
+        
+        if not p.exists():
+            results["failed"].append({"path": str(p), "reason": "File already gone"})
+            continue
+            
+        try:
+            send2trash.send2trash(p)
+            results["success"].append(str(p))
+        except Exception as e:
+            results["failed"].append({"path": str(p), "reason": str(e)})
+        
+    return results
+
+# dnf remove via polkit, returns dictionary with termial output and succes status
+def remove_rpm_package(app_name: str) -> dict:
+    # sudo dnf remove -y app_name
+    command = ["pkexec", "dnf", "remove", "-y", app_name]
+    
+    try:
+        result = subprocess.run(command, capture_output=True, text=True)
+        
+        # 0 means it worked
+        if result.returncode == 0:
+            return {
+                "success": True, 
+                "message": f"Successfully removed {app_name}.", 
+                "details": result.stdout
+            }
+        else:
+            # user clicks cancle or DNF fails
+            return {
+                "success": False, 
+                "message": "Uninstallation failed or was cancelled.", 
+                "details": result.stderr
+            }
+            
+    except FileNotFoundError:
+        return {"success": False, "message": "Polkit (pkexec) is not installed.", "details": ""}
+    except Exception as e:
+        return {"success": False, "message": "An unexpected error occurred.", "details": str(e)}
+
 
 # ====================================================
 # TESTING BLOCK | Will be removed but works for now!!!
