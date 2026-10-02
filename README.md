@@ -66,7 +66,11 @@ Make sure following Dependencies are installed:
 
 **Option 1: Install via RPM (Recommended)**
 1. Download the latest `.rpm` installer from the [**Releases**](https://github.com/mrgame54/kRemover/releases/latest) page.
-2. Install it via DNF:
+2. Open your terminal and navigate to the folder where you downloaded the .rpm (usually Downloads):
+```bash
+cd ~/Downloads
+```
+3. Install it via DNF:
 ```bash
 sudo dnf install ./kremover-*.rpm
 ```
