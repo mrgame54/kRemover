@@ -6,7 +6,7 @@
 
 <hr />
 <p align="center" style="font-size: 18px;">
- <a href="#-installation">Install Instructions</a> | <a href="">Latest Release</a>
+ <a href="#-installation">Install Instructions</a> | <a href="https://github.com/mrgame54/kRemover/releases/latest">Latest Release</a>
 </p>
 
 ## A deep-cleaning uninstaller for Fedora (DNF-based Distros)
@@ -17,12 +17,13 @@ kRemover allows you to easily locate and safely trash leftover user files in a n
 
 <table>
   <tr>
-    <td><img src="https://github.com/user-attachments/assets/b422cfc5-4274-42e2-b8a5-8ce84feb9a97"/></td>
-    <td><img src="https://github.com/user-attachments/assets/ed5907ac-3d41-4d8a-9a50-8886c2fe46d3" /></td>
-    <td><img src="https://github.com/user-attachments/assets/c27453c8-c019-49a9-8b76-187ea6e181b4" /></td>
-    <td><img <img width="1275" height="742" src="https://github.com/user-attachments/assets/d5547576-3576-4087-96ac-56d3d916c171" /></td>
+    <td><img src="https://github.com/user-attachments/assets/b422cfc5-4274-42e2-b8a5-8ce84feb9a97" alt="Screenshot 1"/></td>
+    <td><img src="https://github.com/user-attachments/assets/ed5907ac-3d41-4d8a-9a50-8886c2fe46d3" alt="Screenshot 2"/></td>
   </tr>
-
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/c27453c8-c019-49a9-8b76-187ea6e181b4" alt="Screenshot 3"/></td>
+    <td><img src="https://github.com/user-attachments/assets/d5547576-3576-4087-96ac-56d3d916c171" alt="Screenshot 4"/></td>
+  </tr>
 </table>
 
 
@@ -64,12 +65,13 @@ Make sure following Dependencies are installed:
 ### 🚀 Installation
 
 **Option 1: Install via RPM (Recommended)**
-1. Download the latest `.rpm` installer from the [**Releases**]() page.
+1. Download the latest `.rpm` installer from the [**Releases**](https://github.com/mrgame54/kRemover/releases/latest) page.
 2. Install it via DNF:
 ```bash
-sudo dnf install ./kremover-0.9.0-1.fc44.noarch.rpm
+sudo dnf install ./kremover-*.rpm
 ```
 **Option 2: Compile from Source**
+
 If you prefer to build the RPM package yourself from scratch, please refer to the Build Instructions.
 
 --- 
