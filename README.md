@@ -76,7 +76,7 @@ sudo dnf install ./kremover-*.rpm
 ```
 **Option 2: Compile from Source**
 
-If you prefer to build the RPM package yourself from scratch, please refer to the Build Instructions.
+If you prefer to build the RPM package yourself from scratch, please refer to the [**Build Instructions**](build.md).
 
 --- 
 ### 🐧 Supported Platform
