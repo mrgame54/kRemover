@@ -7,6 +7,28 @@ from PySide6.QtGui import QIcon
 from src.backend import scan_app_leftovers, move_to_trash, remove_rpm_package, get_installed_packages
 import src.resources_rc
 
+# optimization for faster loading
+class PackageLoaderThread(QThread):
+    finished_loading = Signal(list, list) 
+
+    def __init__(self, packages):
+        super().__init__()
+        self.packages = packages
+
+    def run(self):
+        apps_with_logos = []
+        apps_without_logos = []
+        
+        for app_name in self.packages:
+            if QIcon.hasThemeIcon(app_name):
+                apps_with_logos.append(app_name)
+            else:
+                apps_without_logos.append(app_name)
+                
+        apps_with_logos.sort()
+        apps_without_logos.sort()
+        
+        self.finished_loading.emit(apps_with_logos, apps_without_logos)
 
 # thread classes
 class LoadAppsThread(QThread):
@@ -90,21 +112,21 @@ class KRemoverApp(QObject):
         self.window.app_list.setSpacing(2) 
 
     def on_apps_loaded(self, packages):
+        # show a loading message in the UI so the user knows it is working
+        self.window.app_list.clear()
+        self.window.app_list.addItem("Loading packages... Please wait.")
+        self.window.app_list.setEnabled(False)
+
+        # start the background thread
+        self.loader_thread = PackageLoaderThread(packages)
+        self.loader_thread.finished_loading.connect(self.populate_list)
+        self.loader_thread.start()
+
+    def populate_list(self, apps_with_logos, apps_without_logos):
+        self.window.app_list.clear()
+        self.window.app_list.setEnabled(True)
+        
         fallback_icon = QIcon.fromTheme("package-x-generic")
-        
-        # important sort the apps with logo and no logos
-        apps_with_logos = []
-        apps_without_logos = []
-        
-        for app_name in packages:
-            if QIcon.hasThemeIcon(app_name):
-                apps_with_logos.append(app_name)
-            else:
-                apps_without_logos.append(app_name)
-                
-        apps_with_logos.sort()
-        apps_without_logos.sort()
-        
         prioritized_packages = apps_with_logos + apps_without_logos
         
         for app_name in prioritized_packages:
@@ -112,7 +134,7 @@ class KRemoverApp(QObject):
             icon = QIcon.fromTheme(app_name, fallback_icon)
             item.setIcon(icon)
             self.window.app_list.addItem(item)
-        
+
     def filter_app_list(self, text):
         for i in range(self.window.app_list.count()):
             item = self.window.app_list.item(i)

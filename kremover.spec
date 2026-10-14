@@ -1,5 +1,5 @@
 Name:           kremover
-Version:        0.9.0
+Version:        0.9.1
 Release:        1%{?dist}
 Summary:        Fedora KDE RPM Uninstaller and Data Cleaner
 License:        MIT
